@@ -1,0 +1,41 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const contestNormalizer_1 = require("../contestNormalizer");
+const types_1 = require("../types");
+describe('contestNormalizer', () => {
+    it('should normalize a valid Codeforces contest', () => {
+        const rawContest = {
+            id: 1234,
+            name: 'Codeforces Round 1234',
+            type: 'CF',
+            phase: 'BEFORE',
+            frozen: false,
+            durationSeconds: 7200,
+            startTimeSeconds: 1700000000,
+        };
+        const normalized = (0, contestNormalizer_1.normalizeCodeforcesContest)(rawContest);
+        expect(normalized).toEqual({
+            platform: 'codeforces',
+            externalId: '1234',
+            name: 'Codeforces Round 1234',
+            startTime: new Date(1700000000 * 1000).toISOString(),
+            durationMinutes: 120,
+            url: 'https://codeforces.com/contest/1234',
+            status: 'BEFORE',
+        });
+    });
+    it('should handle missing duration gracefully', () => {
+        const rawContest = {
+            id: 5678,
+            name: 'Unknown Duration Contest',
+            type: 'CF',
+            phase: 'BEFORE',
+            frozen: false,
+            durationSeconds: 0,
+            startTimeSeconds: 1700000000,
+        };
+        const normalized = (0, contestNormalizer_1.normalizeCodeforcesContest)(rawContest);
+        expect(normalized.durationMinutes).toBe(0);
+    });
+});
+//# sourceMappingURL=contestNormalizer.test.js.map
